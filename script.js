@@ -44,6 +44,7 @@
 // Convention: The constructor function starts with a capital letter
 // Only function declaration and function expression, not arrow functions because we need the THIS keyword!
 
+/*
 const Person = function (firstName, birthYear) {
   // console.log(this); // result: Person{} ==> Whatever we add to this empty object will be returned at the end from the function
   // Instance properties:
@@ -98,6 +99,7 @@ console.log(federico.hasOwnProperty('species')); // False - it's inherited
 // If a property or a method is not found in a certain object, JS will look into its prototype (Prototypal inheritance / Delegation)
 // Prototype chain: the ability of looking up method and properties in the prototype
 // Person.prototype has a prototype, that is Object.prototype (it comes from {}, that is like writing new Object() in a shorter way)
+/*
 
 Array.prototype.unique = function () {
   return [...new Set(this)];
@@ -109,3 +111,78 @@ console.log(arr.unique());
 // Generally is not a good idea for bigger projects:
 // The next versions of JS may add the same methods but work in a different way
 // Not good in working in a team
+*/
+
+///////////////////////////////////////
+// Coding Challenge #1
+
+/* 
+1. Use a constructor function to implement a Car. A car has a make and a speed property. The speed property is the current speed of the car in km/h;
+2. Implement an 'accelerate' method that will increase the car's speed by 10, and log the new speed to the console;
+3. Implement a 'brake' method that will decrease the car's speed by 5, and log the new speed to the console;
+4. Create 2 car objects and experiment with calling 'accelerate' and 'brake' multiple times on each of them.
+
+DATA CAR 1: 'BMW' going at 120 km/h
+DATA CAR 2: 'Mercedes' going at 95 km/h
+
+GOOD LUCK 😀
+
+
+const Car = function (make, speed) {
+  this.make = make;
+  this.speed = speed;
+};
+
+Car.prototype.accelerate = function () {
+  this.speed += 10;
+  console.log(`${this.make} is going at ${this.speed} km/h`);
+};
+
+Car.prototype.brake = function () {
+  this.speed -= 5;
+  console.log(`${this.make} is going at ${this.speed} km/h`);
+};
+
+const bmw = new Car('BMW', 120);
+const mercedes = new Car('Mercedes', 95);
+
+bmw.accelerate();
+bmw.brake();
+
+mercedes.brake();
+mercedes.accelerate();
+*/
+
+/* ES6 CLASSES */
+// They allow us to do the same thing as prototype but with a nicer syntax
+// Classes in JS are just "syntatic sugar", they implement prototype inheritance but with a nicer syntax
+
+// Class expression: (classes are special cases of function)
+// class Person = class {}
+
+// Class declaration:
+class Person {
+  // There should always be a contructor (we pass the arguments for the properties that we want the object to have):
+  constructor(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  }
+
+  // methods, inside the class but outside the constructor (they will be on the prototype of the object, not on the object itself):
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  }
+}
+
+const jessica = new Person('Jessica', 1999);
+jessica.calcAge();
+
+// We can also a method also outside the class with the prototype:
+Person.prototype.greet = function () {
+  console.log(`Hello ${this.firstName}`);
+};
+jessica.greet();
+
+// Classes are NOT hoisted (we can't use them before we declare them in the code)
+// Classes are first-class citizens: we can past them into function and return them from functions
+// The body of the class are always executed in strict mode
