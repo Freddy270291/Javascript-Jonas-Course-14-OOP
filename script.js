@@ -159,12 +159,12 @@ mercedes.accelerate();
 
 // Class expression: (classes are special cases of function)
 // class Person = class {}
-
+/*
 // Class declaration:
 class Person {
   // There should always be a contructor (we pass the arguments for the properties that we want the object to have):
-  constructor(firstName, birthYear) {
-    this.firstName = firstName;
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
     this.birthYear = birthYear;
   }
 
@@ -172,10 +172,31 @@ class Person {
   calcAge() {
     console.log(2037 - this.birthYear);
   }
+
+  get age() {
+    return 2037 - this.birthYear;
+  }
+  // Set a property that already exists:
+  set fullName(name) {
+    if (name.includes(' ')) this._fullName = name;
+    // siccome si crea un metodo (fullName) che è uguale ad uno dei parametri, si una per convenzione un _ prima: _fullName
+    else alert(`${this.name} is not a full name`);
+  }
+
+  // usando _fullName abbiamo creato un nuovo metodo, bisogna usare un getter:
+  get fullName() {
+    return this._fullName;
+  }
+
+  // STATIC METHOD (not available on the instances, only calling the class.. in this case, Person.hey()):
+  statis hey() {
+    console.log('Hey there!')
+  }
 }
 
-const jessica = new Person('Jessica', 1999);
+const jessica = new Person('Jessica Jones', 1999);
 jessica.calcAge();
+console.log(jessica.age);
 
 // We can also a method also outside the class with the prototype:
 Person.prototype.greet = function () {
@@ -186,3 +207,53 @@ jessica.greet();
 // Classes are NOT hoisted (we can't use them before we declare them in the code)
 // Classes are first-class citizens: we can past them into function and return them from functions
 // The body of the class are always executed in strict mode
+
+////////// SETTERS AND GETTERS PROPERTIES
+// They are functions that get and set a value (they still look like regular properties)
+
+const account = {
+  owner: 'jones',
+  movements: [200, 300, -150, 420],
+
+  // GETTER:
+  get latest() {
+    return this.movements.slice(-1).pop();
+  },
+
+  // SETTER (they need EXACTLY one parameter)
+  set latest(mov) {
+    this.movements.push(mov);
+  },
+};
+
+console.log(account.latest); // we don't call a method, we just use it like a property!
+account.latest = 50; // We SET the last value
+console.log(account.movements);
+*/
+
+/*
+///////// OBJECT.CREATE
+// There are no prototype inheritance properties and no constructor functions and new operators
+// instead, we can use object.create to manually set a prototype of an object to any other object that we want
+
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steven = Object.create(PersonProto); // this returns a new object that is linked to the prototype that we past inside
+// this is an empty object that has the __proto__ properties of the prototype
+steven.name = 'Steven';
+steven.birthYear = 2000;
+steven.calcAge();
+
+const sarah = Object.create(PersonProto);
+sarah.init('Sarah', 1979);
+sarah.calcAge();
+*/
