@@ -401,5 +401,133 @@ console.log(tesla);
 tesla.brake();
 tesla.accelerate(); // Polymorphism: the accelerate method of the child was used instead of the parent one!
 */
-
+/*
 // INHERITANCE BETWEEN 'CLASSES': ES6 CLASSES
+
+// Parent Class:
+class Person {
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
+    this.birthYear = birthYear;
+  }
+
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  }
+
+  get age() {
+    return 2037 - this.birthYear;
+  }
+
+  set fullName(name) {
+    if (name.includes(' ')) this._fullName = name;
+    else alert(`${this.name} is not a full name`);
+  }
+
+  get fullName() {
+    return this._fullName;
+  }
+
+  static hey() {
+    console.log('Hey there!');
+  }
+}
+
+// Child Class: to make the child inherit from the parent class, we need the EXTEND keyword and the SUPER function:
+class Student extends Person {
+  constructor(fullName, birthYear, course) {
+    super(fullName, birthYear); // this is the constructor function of the parent class, we don't have to specify the name of the parent class because we already did with the extend keyword
+    this.course = course;
+  }
+
+  introduce() {
+    console.log(`My name is ${this._fullName} and I study ${this.course}`);
+  }
+
+  // Override a method of the Parent class:
+  calcAge() {
+    console.log(2020 - this.birthYear);
+  }
+}
+
+const martha = new Student('Martha Jones', 1998, 'Law');
+martha.introduce();
+martha.calcAge();
+*/
+
+/*
+// INHERITANCE BETWEEN 'CLASSES': OBJECT.CREATE
+
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steven = Object.create(PersonProto);
+
+const StudentProto = Object.create(PersonProto);
+StudentProto.init = function (firstName, birthYear, course) {
+  PersonProto.init.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+StudentProto.introduce = function () {
+  console.log(`My name is ${this._fullName} and I study ${this.course}`);
+};
+
+const jay = Object.create(StudentProto);
+jay.init('Jay', 2010, 'Finance');
+jay.introduce();
+jay.calcAge();
+*/
+
+class Account {
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.pin = pin;
+    this.movements = []; // We can create on every instance properties that are NOT BASED on any input!
+    this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account, ${owner}`); // When the owner opens a new account he/she receives this message
+  }
+
+  deposit(val) {
+    this.movements.push(val);
+  }
+
+  withdraw(val) {
+    this.deposit(-val);
+  }
+
+  approveLoan(val) {
+    return true;
+  }
+
+  requestLoan(val) {
+    if (this.approveLoan(val)) {
+      this.deposit(val);
+      console.log('Loan approved');
+    }
+  }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+
+// Movements: it's better to create methods that interact with the properties:
+
+// acc1.movements.push(250);  // not good
+// acc1.movements.push(-140);  // not good
+
+acc1.deposit(250);
+acc1.withdraw(140);
+
+acc1.requestLoan(1000);
+console.log(acc1);
