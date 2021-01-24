@@ -554,6 +554,8 @@ console.log(acc1);
 // console.log(acc1.getMovements());
 // With this, the movements can be shown but are not supposed to be modified manually. You can modify manually them only working with the _movements
 
+/*
+
 ///// PRIVATE CLASS FIELDS AND METHODS
 // Part of a bigger proposal of improving JS, it's not yet part of JS
 // With this proposal, classes are moving away from they current feature of "just simpler coding" to have abilities that we don't have with function constructors
@@ -591,16 +593,19 @@ class Account {
 
   deposit(val) {
     this.#movements.push(val);
+    return this;
   }
 
   withdraw(val) {
     this.deposit(-val);
+    return this;
   }
 
   requestLoan(val) {
     if (this._approveLoan(val)) {
       this.deposit(val);
       console.log('Loan approved');
+      return this;
     }
   }
 
@@ -614,3 +619,84 @@ class Account {
 const acc1 = new Account('Jonas', 'EUR', 1111);
 console.log(acc1);
 // console.log(acc1.#movements); // We get an error, we can not access this variable outside
+
+// CHAINING METHODS: we have to return the Objectitself at the end of the method that we want to be chainable
+// Without returning the object, the method will return undefined
+// Return the object:   return this;
+acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000);
+console.log(acc1.getMovements());
+*/
+
+///////////////////////////////////////
+// Coding Challenge #4
+
+/* 
+1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
+2. Make the 'charge' property private;
+3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
+
+DATA CAR 1: 'Rivian' going at 120 km/h, with a charge of 23%
+
+GOOD LUCK 😀
+*/
+
+class Car {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  accelerate() {
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+    return this;
+  }
+
+  brake() {
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+    return this;
+  }
+
+  get speedUS() {
+    return this.speed / 1.6;
+  }
+
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+class EVCl extends Car {
+  #charge;
+
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge;
+  }
+
+  chargeBattery(chargeTo) {
+    this.#charge = chargeTo;
+    return this;
+  }
+
+  accelerate() {
+    this.speed += 20;
+    this.#charge--;
+    console.log(
+      `${this.make} is going at ${this.speed} km/h with a charge of ${
+        this.#charge
+      }`
+    );
+    return this;
+  }
+}
+
+const rivian = new EVCl('Rivian', 120, 23);
+rivian
+  .accelerate()
+  .accelerate()
+  .accelerate()
+  .brake()
+  .chargeBattery(50)
+  .accelerate();
