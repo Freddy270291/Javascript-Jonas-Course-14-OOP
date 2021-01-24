@@ -487,31 +487,39 @@ jay.introduce();
 jay.calcAge();
 */
 
+/*
 class Account {
   constructor(owner, currency, pin) {
     this.owner = owner;
     this.currency = currency;
-    this.pin = pin;
-    this.movements = []; // We can create on every instance properties that are NOT BASED on any input!
     this.locale = navigator.language;
+    // Protected property
+    this._movements = []; // We can create on every instance properties that are NOT BASED on any input!
+    this._pin = pin;
 
     console.log(`Thanks for opening an account, ${owner}`); // When the owner opens a new account he/she receives this message
   }
 
+  // Public interface
+  getMovements() {
+    return this._movements;
+  }
+
   deposit(val) {
-    this.movements.push(val);
+    this._movements.push(val);
   }
 
   withdraw(val) {
     this.deposit(-val);
   }
 
-  approveLoan(val) {
+  _approveLoan(val) {
+    // Private method, should not be part of the public API (shuld be used by the bank..)
     return true;
   }
 
   requestLoan(val) {
-    if (this.approveLoan(val)) {
+    if (this._approveLoan(val)) {
       this.deposit(val);
       console.log('Loan approved');
     }
@@ -523,11 +531,86 @@ console.log(acc1);
 
 // Movements: it's better to create methods that interact with the properties:
 
-// acc1.movements.push(250);  // not good
-// acc1.movements.push(-140);  // not good
+// acc1._movements.push(250);  // not good
+// acc1._movements.push(-140);  // not good
 
 acc1.deposit(250);
 acc1.withdraw(140);
 
 acc1.requestLoan(1000);
 console.log(acc1);
+*/
+
+/* ENCAPSULATION */
+// Keep some properties and methods PRIVATE inside the class, they are not accessible outside of the class
+// 1. To prevent code from outside of the class to accidentally manipulate the data inside the class
+// 2. When we expose only a small interface (API), we can change all the other internal methods with more confidence because we are sure that public code do not rely on these private methods
+
+// we add "_" in front of the methods/data we want private (movements) - it's a convention
+// It can be modified if used, but with this _ we know that is not supposed to be touched outside of the class
+
+// To not modify the _movements, we can create some public methods to just show the movements:
+
+// console.log(acc1.getMovements());
+// With this, the movements can be shown but are not supposed to be modified manually. You can modify manually them only working with the _movements
+
+///// PRIVATE CLASS FIELDS AND METHODS
+// Part of a bigger proposal of improving JS, it's not yet part of JS
+// With this proposal, classes are moving away from they current feature of "just simpler coding" to have abilities that we don't have with function constructors
+// 4 different kids of fields and methods:
+
+// 1) Public fields - Properties that are part of all the instances (movements, locale)
+// 2) Private fields
+// 3) Public methods
+// 4) Private methods
+
+class Account {
+  // 1)Public fields (not in the prototype, they are part of all the instances):
+  locale = navigator.language;
+
+  // 2) Private fields: we use the #. The fields have to be outside the constructor
+  // They are available on the instances, not the prototype
+
+  #movements = [];
+  #pin; // We have to define the variable outside the constructor as empty, then assign a value inside the constructor
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    // Protected proerty
+
+    this.#pin = pin;
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+
+  // 3) Public methods
+  getMovements() {
+    return this.#movements;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+  }
+
+  withdraw(val) {
+    this.deposit(-val);
+  }
+
+  requestLoan(val) {
+    if (this._approveLoan(val)) {
+      this.deposit(val);
+      console.log('Loan approved');
+    }
+  }
+
+  // 4) Private methods: right now no browser support this!
+  // #approveLoad(val) {}
+  _approveLoan(val) {
+    return true;
+  }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+// console.log(acc1.#movements); // We get an error, we can not access this variable outside
